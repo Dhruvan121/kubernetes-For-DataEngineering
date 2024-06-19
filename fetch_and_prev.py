@@ -1,11 +1,10 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-import requests
-import pandas as pd
-import json
 from datetime import timedelta, datetime
 
 def get_data(**kwargs):
+    import requests
+    import pandas as pd
     url = 'https://raw.githubusercontent.com/airscholar/ApacheFlink-SalesAnalytics/main/output/new-output.csv'
     response = requests.get(url)
     print(response)
@@ -20,6 +19,7 @@ def get_data(**kwargs):
         raise Exception(f'Failed to get data, HTTP status code: {response.status_code}')
 
 def preview_data(**kwargs):
+    import json
     output_data = kwargs['ti'].xcom_pull(key='data', task_id='get_data')
     print(output_data)
     if output_data:
