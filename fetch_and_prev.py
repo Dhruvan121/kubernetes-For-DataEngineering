@@ -51,14 +51,14 @@ dag = DAG(
 get_data_from_url = PythonOperator(
     task_id='get_data',
     python_callable=get_data,
-    provide_context=True,  # Ensure the context is provided
+    provide_context=False,  # Ensure the context is provided
     dag=dag
 )
 
 prev_get_data_from_url = PythonOperator(
     task_id='prev_data',
     python_callable=preview_data,
-    provide_context=True,  # Ensure the context is provided
+    provide_context=False,  # Ensure the context is provided
     dag=dag
 )
 
