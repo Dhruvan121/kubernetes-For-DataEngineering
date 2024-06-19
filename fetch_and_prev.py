@@ -1,11 +1,10 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import timedelta, datetime
-import requests
-import pandas as pd
-import json
 
-def get_data(ti, **kwargs):
+def get_data(**kwargs):
+    import requests
+    import pandas as pd
     url = 'https://raw.githubusercontent.com/airscholar/ApacheFlink-SalesAnalytics/main/output/new-output.csv'
     response = requests.get(url)
     print(response)
@@ -14,13 +13,15 @@ def get_data(ti, **kwargs):
         df = pd.read_csv(url, header=None, names=['Category', 'Price', 'Quantity'])
         # Convert the dataframe into json string for xcom
         json_data = df.to_json(orient='records')
-        # Push the json_data into XCom under the key 'data' for the current task instance
-        ti.xcom_push(key='data', value=json_data)
+        # is pushing the json_data into XCom under the key 'data' for the current task instance
+        kwargs['ti'].xcom_push(key='data', value=json_data)
     else:
         raise Exception(f'Failed to get data, HTTP status code: {response.status_code}')
 
-def preview_data(ti, **kwargs):
-    output_data = ti.xcom_pull(key='data', task_id='get_data')
+def preview_data(**kwargs):
+    import json
+    import pandas as pd
+    output_data = kwargs['ti'].xcom_pull(key='data', task_id='get_data')
     print(output_data)
     if output_data:
         output_data = json.loads(output_data)
@@ -38,7 +39,7 @@ def preview_data(ti, **kwargs):
 
 default_args = {
     'owner': 'datamasterylab.com',
-    'start_date': datetime(2024, 6, 19),
+    'start_date': datetime(2024, 1, 25),
     'catchup': False
 }
 
