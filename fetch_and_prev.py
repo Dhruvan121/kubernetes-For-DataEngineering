@@ -39,7 +39,7 @@ def preview_data(**kwargs):
 
 default_args = {
     'owner': 'datamasterylab.com',
-    'start_date': datetime(2024, 1, 25),
+    'start_date': datetime(2024, 6, 19),
     'catchup': False
 }
 
